@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Services\LoanService;
 use Illuminate\Http\Request;
 use App\Models\Loan;
 use App\Models\Book;
@@ -10,55 +11,26 @@ use App\Models\User;
 
 class LoanController extends Controller
 {
+    protected $loanService;
+
+    public function __construct(LoanService $loanService)
+    {
+        $this->loanService = $loanService;
+    }
+
     public function showDataLoan()
     {
-        $loans = Loan::with(['user', 'book'])->get();
-
-        $formattedLoans = $loans->map(function ($loan) {
-            return [
-                'id_peminjaman' => $loan->id,
-                'user' => [
-                    'id_user' => $loan->user->id,
-                    'name' => $loan->user->name,
-                    'email' => $loan->user->email,
-                ],
-                'book' => [
-                    'id_buku' => $loan->book->id,
-                    'judul' => $loan->book->judul,
-                    'penulis' => $loan->book->penulis,
-                ],
-                'batas_waktu' => $loan->batas_waktu,
-                'waktu_dipinjam' => $loan->waktu_dipinjam,
-                'waktu_dikembalikan' => $loan->waktu_dikembalikan,
-                'status' => $loan->status,
-            ];
-        });
-
-        return $this->successResponse($formattedLoans, 'Data peminjaman berhasil diambil.');
+        $loan = $this->loanService->showDataLoan();
+        return $this->successResponse($loan, 'Data peminjaman berhasil ditemukan.');
     }
 
     public function showDetailLoan($id)
     {
-        $loan = Loan::with(['user', 'book'])->findOrFail($id);
-
-        $formattedLoan = [
-            'id_peminjaman' => $loan->id,
-            'user' => [
-                'id_user' => $loan->user->id,
-                'name' => $loan->user->name,
-                'email' => $loan->user->email,
-            ],
-            'book' => [
-                'id_buku' => $loan->book->id,
-                'judul' => $loan->book->judul,
-                'penulis' => $loan->book->penulis,
-            ],
-            'batas_waktu' => $loan->batas_waktu,
-            'waktu_dipinjam' => $loan->waktu_dipinjam,
-            'waktu_dikembalikan' => $loan->waktu_dikembalikan,
-            'status' => $loan->status,
-        ];
-
-        return $this->successResponse($formattedLoan, 'Detail peminjaman berhasil ditemukan.');
+        try {
+            $loan = $this->loanService->showDetailLoan($id);
+            return $this->successResponse($loan, 'Detail peminjaman berhasil ditemukan.');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, null, 404);
+        }
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('penulis');
             $table->text('deskripsi')->nullable();
             $table->integer('stock')->default(1);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

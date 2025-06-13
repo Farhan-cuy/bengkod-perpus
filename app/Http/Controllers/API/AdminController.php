@@ -4,20 +4,28 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Services\AdminService;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
-    public function showUser() {
-        $user = User::all();
-        return response()->json($user);
+    protected $adminService;
+
+    public function __construct(AdminService $adminService)
+    {
+        $this->adminService = $adminService;
+    }
+
+    public function showUser()
+    {
+        $users = $this->adminService->showUser();
+        return $this->successResponse($users, 'Daftar user berhasil diambil');
     }
 
     public function showIdUser($id)
     {
-        $user = User::findOrFail($id);
-        return response()->json($user);
+        $user = $this->adminService->showIdUser($id);
+        return $this->successResponse($user, 'Detail user berhasil diambil');
     }
 
     public function createUser(Request $request)
@@ -26,40 +34,45 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,pustakawan,member'
+            'role' => 'required|in:admin,pustakawan,member' // masih divalidasi, tapi gak disimpan langsung di DB
         ]);
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-        return response()->json(['message' => 'User telah ditambahkan', 'user' => $user], 201);
+
+        Role::firstOrCreate(['name' => $request->role, 'guard_name' => 'web']);
+        // Buat user tanpa menyimpan role ke database langsung
+        $user = $this->adminService->createUser($request->only(['name', 'email', 'password']));
+
+        // Assign role pakai Spatie
+        $user->assignRole($request->role);
+
+        return $this->successResponse($user, 'User telah ditambahkan', 201);
     }
+
 
     public function updateUser(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-
-        $user->update([
-            'name' => $request->name ?? $user->name,
-            'email' => $request->email ?? $user->email,
-            'role' => $request->role ?? $user->role,
+        $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:6',
+            'role' => 'sometimes|required|in:admin,pustakawan,member'
         ]);
 
-        if ($request->password) {
-            $user->password = Hash::make($request->password);
-            $user->save();
+        // Pisahkan role supaya tidak dikirim ke service
+        $data = $request->only(['name', 'email', 'password']);
+        $user = $this->adminService->updateUser($id, $data);
+
+        // Kalau ada input role, update pakai Spatie
+        if ($request->filled('role')) {
+            $user->syncRoles([$request->role]); // Ganti semua role dengan yang baru
         }
 
-        return response()->json(['message' => 'User telah diperbarui', 'user' => $user]);
+        return $this->successResponse($user, 'User telah diperbarui');
     }
+
 
     public function deleteUser($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
-
-        return response()->json(['message' => 'User telah dihapus']);
+        $user = $this->adminService->deleteUser($id);
+        return $this->successResponse($user, 'User telah dihapus');
     }
 }

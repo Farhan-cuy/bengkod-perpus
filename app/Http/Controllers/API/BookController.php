@@ -3,27 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\BookService;
 use Illuminate\Http\Request;
-use App\Models\Book;
 
 class BookController extends Controller
 {
+    protected $bookService;
+
+    public function __construct(BookService $bookService)
+    {
+        $this->bookService = $bookService;
+    }
+
     public function searchBookByJudul(Request $request)
     {
         $keyword = $request->input('keyword');
-        $books = Book::where('judul', 'like', "%$keyword%")->get();
+        $books = $this->bookService->searchBookByJudul($keyword);
         return $this->successResponse($books, 'Pencarian buku berhasil');
     }
 
     public function showBook()
     {
-        $books = Book::all();
+        $books = $this->bookService->showBook();
         return $this->successResponse($books, 'Daftar buku berhasil diambil');
     }
 
     public function showDetailBook($id)
     {
-        $book = Book::findOrFail($id);
+        $book = $this->bookService->showDetailBook($id);
         return $this->successResponse($book, 'Detail buku berhasil ditemukan');
     }
 
@@ -33,23 +40,43 @@ class BookController extends Controller
             'judul' => 'required|string',
             'penulis' => 'required|string',
             'deskripsi' => 'required|string',
-            'stock' => 'required|integer|min:1'
+            'stock' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
-        $book = Book::create($request->all());
+
+        $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('books', 'public');
+        }
+
+        $book = $this->bookService->createBook($data);
         return $this->successResponse($book, 'Buku telah ditambahkan', 201);
     }
 
     public function updateBook(Request $request, $id)
     {
-        $book = Book::findOrFail($id);
-        $book->update($request->only(['judul', 'penulis', 'deskripsi', 'stock']));
+        $request->validate([
+            'judul' => 'sometimes|required|string',
+            'penulis' => 'sometimes|required|string',
+            'deskripsi' => 'sometimes|required|string',
+            'stock' => 'sometimes|required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+
+        $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('books', 'public');
+        }
+
+        $book = $this->bookService->updateBook($id, $data);
         return $this->successResponse($book, 'Buku berhasil diperbarui');
     }
 
     public function deleteBook($id)
     {
-        $book = Book::findOrFail($id);
-        $book->delete();
+        $this->bookService->deleteBook($id);
         return $this->successResponse(null, 'Buku berhasil dihapus');
     }
 }
