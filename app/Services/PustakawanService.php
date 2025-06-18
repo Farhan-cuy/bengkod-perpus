@@ -29,7 +29,12 @@ class PustakawanService
             throw new \Exception('Buku belum dipinjam atau sudah dikembalikan');
         }
 
-        $loan->status = 'dikembalikan';
+        if (now()->gt($loan->batas_waktu)) {
+            $loan->status = 'dikembalikan_terlambat';
+        } else {
+            $loan->status = 'dikembalikan';
+        }
+
         $loan->waktu_dikembalikan = now();
         $loan->save();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PustakawanResource;
 use Illuminate\Http\Request;
 use App\Services\PustakawanService;
 use Illuminate\Support\Facades\Auth;
@@ -16,18 +17,13 @@ class PustakawanController extends Controller
         $this->pustakawanService = $pustakawanService;
     }
 
-    public function showProfile()
-    {
-        return $this->successResponse(Auth::user(), 'Profil pustakawan berhasil diambil');
-    }
-
     public function validateBorrow($id)
     {
         try {
             $loan = $this->pustakawanService->validateBorrow($id);
-            return $this->successResponse($loan, 'Peminjaman telah divalidasi');
+            return $this->successResponse(new PustakawanResource($loan), 'Peminjaman telah divalidasi');
         } catch (\Exception $e) {
-            return $this->exceptionError($e, null, 400);
+            return $this->exceptionError($e, $e->getMessage(), 400);
         }
     }
 
@@ -35,9 +31,9 @@ class PustakawanController extends Controller
     {
         try {
             $loan = $this->pustakawanService->validateReturn($id);
-            return $this->successResponse($loan, 'Pengembalian berhasil divalidasi');
+            return $this->successResponse(new PustakawanResource($loan), 'Pengembalian berhasil divalidasi');
         } catch (\Exception $e) {
-            return $this->exceptionError($e, null, 400);
+            return $this->exceptionError($e, $e->getMessage(), 400);
         }
     }
 }

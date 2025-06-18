@@ -14,22 +14,22 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens, HasFactory, HasRoles; //
 
-    protected $fillable = [ 'name', 'email', 'password', 'role',];
+    protected $fillable = [ 'name', 'email', 'password'];
     protected $hidden = ['password', 'remember_token',];
     public function Loan(): HasMany {
         return $this->hasMany(Loan::class, 'id_user', 'id');
     }
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->hasRole('admin');
     }
     public function isPustakawan(): bool
     {
-        return $this->role === 'pustakawan';
+        return $this->hasRole('pustakawan');
     }
     public function isMember(): bool
     {
-        return $this->role === 'member';
+        return $this->hasRole('member');
     }
 
 /*

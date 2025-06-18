@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Services\BookService;
 use Illuminate\Http\Request;
+use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
@@ -17,66 +20,74 @@ class BookController extends Controller
 
     public function searchBookByJudul(Request $request)
     {
-        $keyword = $request->input('keyword');
-        $books = $this->bookService->searchBookByJudul($keyword);
-        return $this->successResponse($books, 'Pencarian buku berhasil');
+        try {
+            $keyword = $request->input('keyword');
+            $books = $this->bookService->searchBookByJudul($keyword);
+            return $this->successResponse(BookResource::collection($books), 'Pencarian buku berhasil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal mencari buku', 500);
+        }
     }
 
     public function showBook()
     {
-        $books = $this->bookService->showBook();
-        return $this->successResponse($books, 'Daftar buku berhasil diambil');
+        try {
+            $books = $this->bookService->showBook();
+            return $this->successResponse(BookResource::collection($books), 'Daftar buku berhasil diambil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal mengambil daftar buku', 500);
+        }
     }
 
     public function showDetailBook($id)
     {
-        $book = $this->bookService->showDetailBook($id);
-        return $this->successResponse($book, 'Detail buku berhasil ditemukan');
+        try {
+            $book = $this->bookService->showDetailBook($id);
+            return $this->successResponse(new BookResource($book), 'Detail buku berhasil ditemukan');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Buku tidak ditemukan', 404);
+        }
     }
 
-    public function createBook(Request $request)
+    public function createBook(CreateBookRequest $request)
     {
-        $request->validate([
-            'judul' => 'required|string',
-            'penulis' => 'required|string',
-            'deskripsi' => 'required|string',
-            'stock' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+        try {
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
 
-        $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('books', 'public');
+            }
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('books', 'public');
+            $book = $this->bookService->createBook($data);
+            return $this->successResponse(new BookResource($book), 'Buku telah ditambahkan', 201);
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal menambah buku', 400);
         }
-
-        $book = $this->bookService->createBook($data);
-        return $this->successResponse($book, 'Buku telah ditambahkan', 201);
     }
 
-    public function updateBook(Request $request, $id)
+    public function updateBook(UpdateBookRequest $request, $id)
     {
-        $request->validate([
-            'judul' => 'sometimes|required|string',
-            'penulis' => 'sometimes|required|string',
-            'deskripsi' => 'sometimes|required|string',
-            'stock' => 'sometimes|required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
-        ]);
+        try {
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
 
-        $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+            if ($request->hasFile('image')) {
+                $data['image'] = $request->file('image')->store('books', 'public');
+            }
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('books', 'public');
+            $book = $this->bookService->updateBook($id, $data);
+            return $this->successResponse(new BookResource($book), 'Buku berhasil diperbarui');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal memperbarui buku', 400);
         }
-
-        $book = $this->bookService->updateBook($id, $data);
-        return $this->successResponse($book, 'Buku berhasil diperbarui');
     }
 
     public function deleteBook($id)
     {
-        $this->bookService->deleteBook($id);
-        return $this->successResponse(null, 'Buku berhasil dihapus');
+        try {
+            $this->bookService->deleteBook($id);
+            return $this->successResponse(null, 'Buku berhasil dihapus');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal menghapus buku', 400);
+        }
     }
 }

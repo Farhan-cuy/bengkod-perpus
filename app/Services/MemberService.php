@@ -45,4 +45,22 @@ class MemberService
 
         return $loan;
     }
+
+    public function getActiveLoans()
+    {
+        return Loan::with(['book'])
+            ->where('id_user', auth()->id())
+            ->whereIn('status', ['dipinjam'])
+            ->orderByDesc('created_at')
+            ->get();
+    }
+
+    public function getBorrowHistory()
+    {
+        return Loan::with(['book'])
+            ->where('id_user', auth()->id())
+            ->whereIn('status', ['dikembalikan', 'dikembalikan_terlambat'])
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

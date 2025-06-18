@@ -14,6 +14,15 @@ class AdminService
     {
         return User::findOrFail($id);
     }
+public function getAllPustakawans()
+{
+    return User::role('pustakawan')->get();
+}
+
+public function getAllMembers()
+{
+    return User::role('member')->get();
+}
 
     public function createUser($data)
     {

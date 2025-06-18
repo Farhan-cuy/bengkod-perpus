@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\UpdateProfileRequest;
 
 class AuthController extends Controller
 {
@@ -15,29 +18,51 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
         try {
             $result = $this->authService->login($request->email, $request->password);
-            return $this->successResponse($result, 'Login berhasil');
+            return $this->successResponse([
+                'token' => $result['token'],
+                'user' => new AuthResource($result['user'])
+            ], 'Login berhasil');
         } catch (\Exception $e) {
-            return $this->exceptionError($e, null, 401);
+            return $this->exceptionError($e, 'Login gagal', 401);
         }
     }
 
     public function logout(Request $request)
     {
-        $this->authService->logout($request->user());
-        return $this->successResponse(null, 'Logout berhasil');
+        try {
+            $this->authService->logout($request->user());
+            return $this->successResponse(null, 'Logout berhasil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Logout gagal', 400);
+        }
     }
 
     public function showProfile(Request $request)
     {
-        return $this->successResponse($request->user(), 'Profil user berhasil diambil');
+        try {
+            return $this->successResponse(new AuthResource($request->user()), 'Profil user berhasil diambil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal mengambil profil', 400);
+        }
+    }
+
+
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        try {
+            $user = auth()->user();
+            $user->name = $request->name;
+            if ($request->filled('password')) {
+                $user->password = bcrypt($request->password);
+            }
+            $user->save();
+            return $this->successResponse(new AuthResource($user), 'Profil berhasil diperbarui');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal memperbarui profil', 400);
+        }
     }
 }

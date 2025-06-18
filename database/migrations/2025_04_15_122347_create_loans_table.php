@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_user') ->constrained('users',  'id')->onDelete('cascade');
             $table->foreignId('id_buku') ->constrained('books',  'id')->onDelete('cascade');
-            $table->enum('status',['dipesan','dibatalkan','dipinjam','dikembalikan']);
+            $table->enum('status',['dipesan','dibatalkan','dipinjam','dikembalikan','dikembalikan_terlambat']);
             $table->date('batas_waktu')->nullable();
             $table->date('waktu_dipinjam')->nullable();
             $table->date('waktu_dikembalikan')->nullable();
