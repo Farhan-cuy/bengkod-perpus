@@ -38,4 +38,17 @@ class LoanController extends Controller
             return $this->exceptionError($e, 'Detail peminjaman tidak ditemukan', 404);
         }
     }
+
+    public function showLoanDipesan()
+    {
+        try {
+            $loans = $this->loanService->showLoanDipesan();
+            return $this->successResponse(
+                LoanResource::collection($loans),
+                'Data peminjaman dengan status dipesan berhasil ditemukan.'
+            );
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal mengambil data peminjaman dipesan', 500);
+        }
+    }
 }

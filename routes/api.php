@@ -29,15 +29,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/users/{id_user}', [AdminController::class, 'showIdUser'])->where('id_user','[0-9]+');
 });
 
-Route::middleware(['auth:sanctum', 'role:member'])->group(function () {
-    Route::post('/borrow', [MemberController::class, 'borrowBook']); //udah
-    Route::delete('/borrow/cancel/{id}', [MemberController::class, 'cancelBorrow']); //udah
-    Route::get('/borrow/active', [MemberController::class, 'activeLoans']);
-    Route::get('/borrow/history', [MemberController::class, 'borrowHistory']);
-});
-
 Route::middleware(['auth:sanctum', 'role:admin|pustakawan'])->group(function () {
     Route::get('/loans', [LoanController::class, 'showDataLoan']); //udah
+    Route::get('/loans/pending', [LoanController::class, 'showLoanDipesan']); //udah
     Route::get('/loans/{id}', [LoanController::class, 'showDetailLoan']); //udah
     Route::post('/books', [BookController::class, 'createBook']); //udah
     Route::put('/books/{id_buku}', [BookController::class, 'updateBook']); //udah
@@ -46,4 +40,11 @@ Route::middleware(['auth:sanctum', 'role:admin|pustakawan'])->group(function () 
     Route::put('/pustakawan/validate-return/{id}', [PustakawanController::class, 'validateReturn']);
 });
 
+Route::middleware(['auth:sanctum', 'role:member'])->group(function () {
+    Route::post('/borrow', [MemberController::class, 'borrowBook']); //udah
+    Route::delete('/borrow/cancel/{id}', [MemberController::class, 'cancelBorrow']); //udah
+    Route::get('/borrow/active', [MemberController::class, 'activeLoans']);
+    Route::get('/borrow/history', [MemberController::class, 'borrowHistory']);
+    Route::get('/borrow/pending', [MemberController::class, 'borrowPending']); //udah
+});
 

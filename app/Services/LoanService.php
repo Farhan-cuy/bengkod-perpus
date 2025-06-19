@@ -16,5 +16,12 @@ class LoanService
     {
         return Loan::with(['user', 'book'])->findOrFail($id);
     }
+
+    public function showLoanDipesan()
+    {
+        return Loan::with(['user', 'book'])
+            ->where('status', 'dipesan')
+            ->get();
+    }
 }
 

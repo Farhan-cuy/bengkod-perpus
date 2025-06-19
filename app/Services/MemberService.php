@@ -63,4 +63,13 @@ class MemberService
             ->orderByDesc('created_at')
             ->get();
     }
+
+    public function getBorrowPending()
+    {
+        return Loan::with(['book'])
+            ->where('id_user', auth()->id())
+            ->whereIn('status', ['dipesan'])
+            ->orderByDesc('created_at')
+            ->get();
+    }
 }

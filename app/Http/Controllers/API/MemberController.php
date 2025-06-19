@@ -58,4 +58,14 @@ class MemberController extends Controller
             return $this->exceptionError($e, 'Gagal mengambil riwayat', 400);
         }
     }
+
+    public function borrowPending()
+    {
+        try {
+            $loans = $this->memberService->getBorrowPending();
+            return $this->successResponse(MemberResource::collection($loans), 'Daftar buku yang sedang di pesan ');
+        } catch (Exception $e) {
+            return $this->exceptionError($e, 'Gagal mengambil riwayat', 400);
+        }
+    }
 }
