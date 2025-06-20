@@ -22,7 +22,10 @@ class AdminController extends Controller
     {
         try {
             $users = $this->adminService->showUser();
-            return $this->successResponse(AdminResource::collection($users), 'Daftar user berhasil diambil');
+            return $this->successResponse([
+                'total' => $users->count(),
+                'data' => AdminResource::collection($users)
+            ], 'Daftar user berhasil diambil');
         } catch (\Exception $e) {
             return $this->exceptionError($e, 'Gagal mengambil daftar user', 500);
         }
@@ -33,7 +36,7 @@ class AdminController extends Controller
         try {
             $users = $this->adminService->getAllMembers();
             if ($users->isEmpty()) {
-            return $this->successResponse([], 'Tidak ada member ditemukan');
+                return $this->successResponse([], 'Tidak ada member ditemukan');
             }
             return $this->successResponse(AdminResource::collection($users), 'Daftar member berhasil diambil');
         } catch (\Exception $e) {
@@ -46,7 +49,7 @@ class AdminController extends Controller
         try {
             $users = $this->adminService->getAllPustakawans();
             if ($users->isEmpty()) {
-            return $this->successResponse([], 'Tidak ada pustakawan ditemukan');
+                return $this->successResponse([], 'Tidak ada pustakawan ditemukan');
             }
             return $this->successResponse(AdminResource::collection($users), 'Daftar pustakawan berhasil diambil');
         } catch (\Exception $e) {

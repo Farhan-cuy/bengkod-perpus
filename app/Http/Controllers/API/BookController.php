@@ -33,7 +33,12 @@ class BookController extends Controller
     {
         try {
             $books = $this->bookService->showBook();
-            return $this->successResponse(BookResource::collection($books), 'Daftar buku berhasil diambil');
+            $bukuTersedia = $books->where('stock', '>', 0)->count();
+            return $this->successResponse([
+                'total' => $books->count(),
+                'buku_tersedia' => $bukuTersedia,
+                'data' => BookResource::collection($books)
+            ], 'Daftar buku berhasil diambil');
         } catch (\Exception $e) {
             return $this->exceptionError($e, 'Gagal mengambil daftar buku', 500);
         }

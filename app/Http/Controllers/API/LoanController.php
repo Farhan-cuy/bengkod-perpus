@@ -23,7 +23,15 @@ class LoanController extends Controller
     {
         try {
             $loan = $this->loanService->showDataLoan();
-            return $this->successResponse(LoanResource::collection($loan), 'Data peminjaman berhasil ditemukan.');
+
+            $totalDipinjam = $loan->where('status', 'dipinjam')->count();
+            $totalTerlambat = $loan->where('status', 'dikembalikan_terlambat')->count();
+
+            return $this->successResponse([
+                'total_buku_dipinjam' => $totalDipinjam,
+                'total_buku_terlambat' => $totalTerlambat,
+                'data' => LoanResource::collection($loan)
+            ], 'Data peminjaman berhasil ditemukan.');
         } catch (\Exception $e) {
             return $this->exceptionError($e, 'Gagal mengambil data peminjaman', 500);
         }
