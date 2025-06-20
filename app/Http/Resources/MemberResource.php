@@ -21,6 +21,7 @@ class MemberResource extends JsonResource
             'waktu_peminjaman' => $this->created_at ? $this->created_at->format('H:i:s') : null,
             'tanggal_konfirm' => $this->waktu_dipinjam ? \Carbon\Carbon::parse($this->waktu_dipinjam)->format('Y-m-d') : null,
             'tanggal_dikembalikan' => $this->waktu_dikembalikan ? \Carbon\Carbon::parse($this->waktu_dikembalikan)->format('Y-m-d') : null,
+            'deadline_waktu' => $this->batas_waktu ? \Carbon\Carbon::parse($this->batas_waktu)->format('Y-m-d') : null,
             'status' => $this->status,
         ];
     }
