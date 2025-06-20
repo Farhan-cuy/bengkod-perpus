@@ -12,6 +12,9 @@ class UpdateBook extends Seeder
      */
     public function run(): void
     {
+        // Hapus semua data lama (opsional, hati-hati di production)
+        // Book::truncate();
+
         $books = [
             [
                 'judul' => 'Detektif Conan Vol. 1',
@@ -21,6 +24,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1998,
                 'kategori' => 'Komik',
+                'image' => 'books/conan1.jpg',
             ],
             [
                 'judul' => 'Detektif Conan Vol. 2',
@@ -30,6 +34,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1998,
                 'kategori' => 'Komik',
+                'image' => 'books/conan2.jpg',
             ],
             [
                 'judul' => 'Naruto Vol. 1',
@@ -39,6 +44,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 2000,
                 'kategori' => 'Komik',
+                'image' => 'books/naruto1.jpg',
             ],
             [
                 'judul' => 'Naruto Vol. 2',
@@ -48,6 +54,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 2000,
                 'kategori' => 'Komik',
+                'image' => 'books/naruto2.jpg',
             ],
             [
                 'judul' => 'Sailor Moon Vol. 1',
@@ -57,6 +64,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1996,
                 'kategori' => 'Komik',
+                'image' => 'books/sailormoon1.jpg',
             ],
             [
                 'judul' => 'Sailor Moon Vol. 2',
@@ -66,6 +74,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1996,
                 'kategori' => 'Komik',
+                'image' => 'books/sailormoon2.jpg',
             ],
             [
                 'judul' => 'One Piece Vol. 1',
@@ -75,6 +84,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 2002,
                 'kategori' => 'Komik',
+                'image' => 'books/onepiece1.jpg',
             ],
             [
                 'judul' => 'One Piece Vol. 2',
@@ -84,6 +94,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 2002,
                 'kategori' => 'Komik',
+                'image' => 'books/onepiece2.jpg',
             ],
             [
                 'judul' => 'Doraemon Vol. 1',
@@ -93,6 +104,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1991,
                 'kategori' => 'Komik',
+                'image' => 'books/doraemon1.jpg',
             ],
             [
                 'judul' => 'Doraemon Vol. 2',
@@ -102,6 +114,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1991,
                 'kategori' => 'Komik',
+                'image' => 'books/doraemon2.jpg',
             ],
             [
                 'judul' => 'Dragon Ball Vol. 1',
@@ -111,6 +124,7 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1995,
                 'kategori' => 'Komik',
+                'image' => 'books/dragonball1.jpg',
             ],
             [
                 'judul' => 'Dragon Ball Vol. 2',
@@ -120,11 +134,15 @@ class UpdateBook extends Seeder
                 'penerbit' => 'Elex Media Komputindo',
                 'tahun_terbit' => 1995,
                 'kategori' => 'Komik',
+                'image' => 'books/dragonball2.jpg',
             ],
         ];
 
         foreach ($books as $book) {
-            Book::create($book);
+            Book::updateOrCreate(
+                ['judul' => $book['judul']],
+                $book
+            );
         }
     }
 }
