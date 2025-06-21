@@ -57,7 +57,7 @@ class BookController extends Controller
     public function createBook(CreateBookRequest $request)
     {
         try {
-            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock', 'penerbit', 'tahun_terbit', 'kategori']);
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('books', 'public');
@@ -73,7 +73,7 @@ class BookController extends Controller
     public function updateBook(UpdateBookRequest $request, $id)
     {
         try {
-            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock']);
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock', 'penerbit', 'tahun_terbit', 'kategori']);
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('books', 'public');
