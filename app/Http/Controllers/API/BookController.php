@@ -18,11 +18,11 @@ class BookController extends Controller
         $this->bookService = $bookService;
     }
 
-    public function searchBookByJudul(Request $request)
+    public function searchBook(Request $request)
     {
         try {
             $keyword = $request->input('keyword');
-            $books = $this->bookService->searchBookByJudul($keyword);
+            $books = $this->bookService->searchBook($keyword);
             return $this->successResponse(BookResource::collection($books), 'Pencarian buku berhasil');
         } catch (\Exception $e) {
             return $this->exceptionError($e, 'Gagal mencari buku', 500);

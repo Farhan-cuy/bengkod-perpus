@@ -14,7 +14,7 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/books', [BookController::class, 'showBook']); //udah
     Route::get('/books/{id_buku}', [BookController::class, 'showDetailBook']); //udah
-    Route::get('/search/books', [BookController::class, 'searchBookByJudul']); //udah
+    Route::get('/search/books', [BookController::class, 'searchBook']); //udah
     Route::get('/profile', [AuthController::class, 'showProfile']); //udah
     Route::put('/profile', [AuthController::class, 'updateProfile']); //udah
 });

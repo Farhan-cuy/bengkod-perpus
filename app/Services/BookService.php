@@ -6,9 +6,15 @@ use App\Models\Book;
 
 class BookService
 {
-    public function searchBookByJudul($keyword)
+    public function searchBook($keyword)
     {
-        return Book::where('judul', 'like', "%$keyword%")->get();
+        return Book::where(function ($query) use ($keyword) {
+            $query->where('judul', 'like', "%$keyword%")
+                ->orWhere('penulis', 'like', "%$keyword%")
+                ->orWhere('penerbit', 'like', "%$keyword%")
+                ->orWhere('tahun_terbit', 'like', "%$keyword%")
+                ->orWhere('kategori', 'like', "%$keyword%");
+        })->get();
     }
 
     public function showBook()
