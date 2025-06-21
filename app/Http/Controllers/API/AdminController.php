@@ -109,4 +109,14 @@ class AdminController extends Controller
         }
     }
 
+    public function resetPassword($id)
+    {
+        try {
+            $user = $this->adminService->resetPassword($id);
+            return $this->successResponse(new AdminResource($user), 'Password user telah direset ke password default');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal reset password user', 400);
+        }
+    }
+
 }

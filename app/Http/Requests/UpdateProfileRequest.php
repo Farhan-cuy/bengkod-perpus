@@ -21,8 +21,11 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('id_user'); // atau 'id' sesuai nama parameter route
+
         return [
             'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
             'password' => 'nullable|min:6|confirmed',
         ];
     }

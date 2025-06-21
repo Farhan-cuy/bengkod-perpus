@@ -51,4 +51,11 @@ public function getAllMembers()
         $user->delete();
         return $user;
     }
+    public function resetPassword($id, $newPassword = 'password123')
+    {
+        $user = User::findOrFail($id);
+        $user->password = bcrypt($newPassword);
+        $user->save();
+        return $user;
+    }
 }

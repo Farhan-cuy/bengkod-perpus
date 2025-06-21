@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/users/pustakawan', [AdminController::class, 'showPustakawans']);
     Route::get('/users/member', [AdminController::class, 'showMembers']);
     Route::post('/users', [AdminController::class, 'createUser']); //udah
+    Route::post('/users/reset/{id_user}', [AdminController::class, 'resetPassword'])->where('id_user','[0-9]+'); //udah
     Route::put('/users/{id_user}', [AdminController::class, 'updateUser']); //udah
     Route::delete('/users/{id_user}', [AdminController::class, 'deleteUser']); //udah
     Route::get('/users/{id_user}', [AdminController::class, 'showIdUser'])->where('id_user','[0-9]+');
