@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 Route::middleware(['auth:sanctum', 'role:admin|pustakawan'])->group(function () {
     Route::get('/loans', [LoanController::class, 'showDataLoan']); //udah
     Route::get('/loans/pending', [LoanController::class, 'showLoanDipesan']); //udah
+    Route::get('/loans/borrowed', [LoanController::class, 'showLoanDipinjam']); //udah
     Route::get('/loans/returned', [LoanController::class, 'showLoanDikembalikan']); //udah
     Route::get('/loans/{id}', [LoanController::class, 'showDetailLoan']); //udah
     Route::post('/books', [BookController::class, 'createBook']); //udah

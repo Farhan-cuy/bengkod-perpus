@@ -24,6 +24,13 @@ class LoanService
             ->get();
     }
 
+    public function showLoanDipinjam()
+    {
+        return Loan::with(['user', 'book'])
+            ->where('status', 'dipinjam')
+            ->get();
+    }
+
     public function showLoanDikembalikan()
     {
         return Loan::with(['user', 'book'])
