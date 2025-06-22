@@ -23,5 +23,12 @@ class LoanService
             ->where('status', 'dipesan')
             ->get();
     }
+
+    public function showLoanDikembalikan()
+    {
+        return Loan::with(['user', 'book'])
+            ->whereIn('status', ['dikembalikan','dikembalikan_terlambat'])
+            ->get();
+    }
 }
 
