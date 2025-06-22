@@ -23,10 +23,14 @@ class LoanResource extends JsonResource
             'user' => $this->user ? $this->user->name : null,
             'buku' => $this->book ? $this->book->judul : null,
             'batas_tanggal' => $this->batas_waktu,
-            'tanggal_dipinjam' => $this->waktu_dipinjam,
-            'tanggal_dikembalikan' => $this->waktu_dikembalikan,
+            // Waktu pesan (saat request dibuat)
+            'tanggal_pesan' => $this->created_at ? $this->created_at->format('Y-m-d') : null,
+            'waktu_pesan' => $this->created_at ? $this->created_at->format('H:i:s') : null,
+            // Waktu dipinjam (saat dikonfirmasi)
+            'tanggal_dipinjam' => $this->waktu_dipinjam ? Carbon::parse($this->waktu_dipinjam)->format('Y-m-d') : null,
+            'waktu_dipinjam' => $this->waktu_dipinjam ? Carbon::parse($this->waktu_dipinjam)->format('H:i:s') : null,
+            'tanggal_dikembalikan' => $this->waktu_dikembalikan ? Carbon::parse($this->waktu_dikembalikan)->format('Y-m-d') : null,
             'sisa_hari' => ($this->status === 'dipinjam') ? ($batas ? $today->diffInDays($batas, false) : null): null,
-            'waktu_peminjaman' => $this->created_at ? $this->created_at->format('H:i:s') : null,
             'status' => $this->status,
         ];
     }
