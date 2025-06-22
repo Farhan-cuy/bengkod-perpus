@@ -7,6 +7,7 @@ use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\UpdateProfileRequest;
 
 class AuthController extends Controller
@@ -18,7 +19,7 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
         try {
             $result = $this->authService->register($request->email, $request->password, $request->name);
