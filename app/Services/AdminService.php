@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AdminService
 {
@@ -26,7 +27,7 @@ public function getAllMembers()
 
     public function createUser($data)
     {
-        $data['password'] = bcrypt($data['password']);
+        $data['password'] = Hash::make($data['password']);
         return User::create($data);
     }
 
@@ -35,7 +36,7 @@ public function getAllMembers()
         $user = User::findOrFail($id);
 
         if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
+            $data['password'] = Hash::make($data['password']);
         } else {
             unset($data['password']); // Biar password lama tetap
         }

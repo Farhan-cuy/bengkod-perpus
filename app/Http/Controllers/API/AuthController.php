@@ -18,6 +18,19 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    public function register(Request $request)
+    {
+        try {
+            $result = $this->authService->register($request->email, $request->password, $request->name);
+            return $this->successResponse([
+                'token' => $result['token'],
+                'user' => new AuthResource($result['user'])
+            ], 'Registrasi berhasil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Registrasi gagal', 400);
+        }
+    }
+
     public function login(LoginRequest $request)
     {
         try {

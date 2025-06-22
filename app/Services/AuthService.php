@@ -23,6 +23,24 @@ class AuthService
         ];
     }
 
+    public function register($email, $password, $name)
+    {
+        $user = User::create([
+            'email' => $email,
+            'password' => Hash::make($password),
+            'name' => $name
+        ]);
+
+        $user->assignRole('member');
+
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return [
+            'token' => $token,
+            'user' => $user
+        ];
+    }
+
     public function logout($user)
     {
         $user->tokens()->delete();
