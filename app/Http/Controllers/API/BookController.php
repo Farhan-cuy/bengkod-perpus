@@ -33,7 +33,7 @@ class BookController extends Controller
     {
         try {
             $books = $this->bookService->showBook();
-            $total = $books->sum('stock_awal');
+            $total = $books->count();
             $bukuTersedia = $books->sum('stock');
             return $this->successResponse([
                 'total' => $total,
