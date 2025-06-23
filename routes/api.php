@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum', 'role:admin|pustakawan'])->group(function () 
     Route::get('/loans/pending', [LoanController::class, 'showLoanDipesan']); //udah
     Route::get('/loans/borrowed', [LoanController::class, 'showLoanDipinjam']); //udah
     Route::get('/loans/returned', [LoanController::class, 'showLoanDikembalikan']); //udah
+    Route::get('/loans/recap', [LoanController::class, 'rekapPeminjamanPerBulan']); //udah
     Route::get('/loans/{id}', [LoanController::class, 'showDetailLoan']); //udah
     Route::post('/books', [BookController::class, 'createBook']); //udah
     Route::put('/books/{id_buku}', [BookController::class, 'updateBook']); //udah

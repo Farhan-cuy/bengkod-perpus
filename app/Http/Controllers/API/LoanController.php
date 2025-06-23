@@ -85,4 +85,14 @@ class LoanController extends Controller
             return $this->exceptionError($e, 'Gagal mengambil data peminjaman dikembalikan', 500);
         }
     }
+
+    public function rekapPeminjamanPerBulan()
+    {
+        try {
+            $rekap = $this->loanService->rekapPeminjamanPerBulan();
+            return $this->successResponse($rekap, 'Rekap peminjaman per bulan berhasil diambil');
+        } catch (\Exception $e) {
+            return $this->exceptionError($e, 'Gagal mengambil rekap peminjaman', 500);
+        }
+    }
 }
