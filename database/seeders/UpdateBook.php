@@ -138,6 +138,11 @@ class UpdateBook extends Seeder
             ],
         ];
 
+        foreach ($books as &$book) {
+            $book['stock_awal'] = $book['stock'];
+        }
+        unset($book);
+
         foreach ($books as $book) {
             Book::updateOrCreate(
                 ['judul' => $book['judul']],

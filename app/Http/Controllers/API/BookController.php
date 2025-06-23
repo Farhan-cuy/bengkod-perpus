@@ -33,9 +33,10 @@ class BookController extends Controller
     {
         try {
             $books = $this->bookService->showBook();
-            $bukuTersedia = $books->where('stock', '>', 0)->count();
+            $total = $books->sum('stock_awal');
+            $bukuTersedia = $books->sum('stock');
             return $this->successResponse([
-                'total' => $books->count(),
+                'total' => $total,
                 'buku_tersedia' => $bukuTersedia,
                 'data' => BookResource::collection($books)
             ], 'Daftar buku berhasil diambil');
@@ -57,12 +58,13 @@ class BookController extends Controller
     public function createBook(CreateBookRequest $request)
     {
         try {
-            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock', 'penerbit', 'tahun_terbit', 'kategori']);
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock','stock_awal', 'penerbit', 'tahun_terbit', 'kategori']);
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('books', 'public');
             }
 
+            $data['stock_awal'] = $data['stock'];
             $book = $this->bookService->createBook($data);
             return $this->successResponse(new BookResource($book), 'Buku telah ditambahkan', 201);
         } catch (\Exception $e) {
@@ -73,7 +75,19 @@ class BookController extends Controller
     public function updateBook(UpdateBookRequest $request, $id)
     {
         try {
-            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock', 'penerbit', 'tahun_terbit', 'kategori']);
+            $data = $request->only(['judul', 'penulis', 'deskripsi', 'stock', 'stock_awal', 'penerbit', 'tahun_terbit', 'kategori']);
+
+            $book = $this->bookService->ShowDetailBook($id);
+
+            // Jika stock_awal diupdate, sesuaikan stock juga
+            if (isset($data['stock_awal'])) {
+                $selisih = $data['stock_awal'] - $book->stock_awal;
+                $data['stock'] = $book->stock + $selisih;
+                // Pastikan stock tidak minus
+                if ($data['stock'] < 0) {
+                    $data['stock'] = 0;
+                }
+            }
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('books', 'public');

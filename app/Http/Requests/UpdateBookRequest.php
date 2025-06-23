@@ -25,11 +25,11 @@ class UpdateBookRequest extends FormRequest
             'judul' => 'sometimes|required|string',
             'penulis' => 'sometimes|required|string',
             'deskripsi' => 'sometimes|required|string',
-            'stock' => 'sometimes|required|integer|min:1',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'penerbit' => 'nullable|string',
             'tahun_terbit' => 'nullable|digits:4|integer',
             'kategori' => 'nullable|string',
+            'stock_awal' => 'nullable|integer|min:0',
         ];
     }
 }
