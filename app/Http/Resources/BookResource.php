@@ -22,6 +22,7 @@ class BookResource extends JsonResource
             'kategori'  => $this->kategori,
             'sinopsis' => $this->deskripsi,
             'stock'     => $this->stock,
+            'stock_awal' => $this->stock_awal,
             'image'     => $this->image ? asset('storage/' . $this->image) : null,
         ];
     }
