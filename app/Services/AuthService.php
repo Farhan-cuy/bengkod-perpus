@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AuthService
 {
@@ -15,10 +16,13 @@ class AuthService
             throw new \Exception('Email atau password salah');
         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+        $user->tokens()->delete();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
             'token' => $token,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'user' => $user
         ];
     }
@@ -31,6 +35,7 @@ class AuthService
             'name' => $name
         ]);
 
+        Role::findOrCreate('member', 'web');
         $user->assignRole('member');
 
         $token = $user->createToken('api-token')->plainTextToken;

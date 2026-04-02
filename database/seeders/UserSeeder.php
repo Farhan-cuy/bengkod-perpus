@@ -13,17 +13,36 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Pastikan role sudah ada
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        $pustakawanRole = Role::firstOrCreate(['name' => 'pustakawan', 'guard_name' => 'web']);
+        $memberRole = Role::firstOrCreate(['name' => 'member', 'guard_name' => 'web']);
 
-        // Buat user
-        $user = User::create([
-            'name' => 'Admin',
-            'email' => 'Farhan@example.com',
-            'password' => bcrypt('12345'), // password
-        ]);
+        $admin = User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'password' => bcrypt('12345'),
+            ]
+        );
 
-        // Assign role ke user
-        $user->assignRole($adminRole);
+        $pustakawan = User::updateOrCreate(
+            ['email' => 'pustakawan@gmail.com'],
+            [
+                'name' => 'Pustakawan',
+                'password' => bcrypt('12345'),
+            ]
+        );
+
+        $member = User::updateOrCreate(
+            ['email' => 'member@gmail.com'],
+            [
+                'name' => 'Member',
+                'password' => bcrypt('12345'),
+            ]
+        );
+
+        $admin->syncRoles([$adminRole]);
+        $pustakawan->syncRoles([$pustakawanRole]);
+        $member->syncRoles([$memberRole]);
     }
 }

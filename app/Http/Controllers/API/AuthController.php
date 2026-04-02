@@ -19,6 +19,9 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    /**
+     * @unauthenticated
+     */
     public function register(RegisterRequest $request)
     {
         try {
@@ -32,12 +35,21 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @unauthenticated
+     */
     public function login(LoginRequest $request)
     {
         try {
-            $result = $this->authService->login($request->email, $request->password);
+            $result = $this->authService->login(
+                $request->email,
+                $request->password
+            );
+
             return $this->successResponse([
                 'token' => $result['token'],
+                'access_token' => $result['access_token'],
+                'token_type' => $result['token_type'],
                 'user' => new AuthResource($result['user'])
             ], 'Login berhasil');
         } catch (\Exception $e) {
@@ -68,7 +80,7 @@ class AuthController extends Controller
     public function updateProfile(UpdateProfileRequest $request)
     {
         try {
-            $user = auth()->user();
+            $user = $request->user();
             $user->name = $request->name;
             if ($request->filled('password')) {
                 $user->password = bcrypt($request->password);

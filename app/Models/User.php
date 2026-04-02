@@ -14,25 +14,26 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens, HasFactory, HasRoles; //
 
-    protected $fillable = [ 'name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password'];
     protected $hidden = ['password', 'remember_token',];
-    public function Loan(): HasMany {
+    public function Loan(): HasMany
+    {
         return $this->hasMany(Loan::class, 'id_user', 'id');
     }
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin');
-    }
-    public function isPustakawan(): bool
-    {
-        return $this->hasRole('pustakawan');
-    }
-    public function isMember(): bool
-    {
-        return $this->hasRole('member');
-    }
+    // public function isAdmin(): bool
+    // {
+    //     return $this->hasRole('admin');
+    // }
+    // public function isPustakawan(): bool
+    // {
+    //     return $this->hasRole('pustakawan');
+    // }
+    // public function isMember(): bool
+    // {
+    //     return $this->hasRole('member');
+    // }
 
-/*
+    /*
     public function bisaManageUser(): bool{
         return $this->isAdmin();
     }
@@ -46,5 +47,4 @@ class User extends Authenticatable
         return $this->isMember();
     }
 */
-
 }
